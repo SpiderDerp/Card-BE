@@ -11,7 +11,11 @@ public class Game : MonoBehaviour
     private int turn;
     public GameObject energy;
     private int playerHealth;
+    public Slider playerhealthBar;
+    public TMP_Text playerhealthText;
     private int enemyHealth;
+    public Slider enemyhealthBar;
+    public TMP_Text enemyhealthText;
 
     private bool playerTurn;
     private LayoutElement layoutElement;
@@ -22,20 +26,33 @@ public class Game : MonoBehaviour
 
     private bool playerImmune;
     private bool enemyImmune;
+
     // Start is called before the first frame update
     void Start()
     {
         turn = 1;
         playerTurn = true;
-        playerHealth = 200;
-        enemyHealth = 200;
+
+        playerHealth = 400;
+        enemyHealth = 400;
+        //playerhealthBar = playerhealthBar.GetComponent<Slider>();
+        playerhealthBar.maxValue = playerHealth;
+        playerhealthBar.value = playerHealth;
+        playerhealthText.text = playerHealth.ToString();
+        //enemyhealthBar = playerhealthBar.GetComponent<Slider>();
+        enemyhealthBar.maxValue = enemyHealth;
+        enemyhealthBar.value = enemyHealth;
+        enemyhealthText.text = enemyHealth.ToString();
+
         playerImmune = false;
         enemyImmune = false;
+
         deck = GameObject.FindGameObjectsWithTag("DeckCard");
         ShuffleDeck();
         int count = 0;
         GameObject[] movetoHand = new GameObject[5];
         TMP_Text energyText = energy.GetComponent<TMP_Text>();
+
         //switch case
         switch (turn) {
             case 1:
@@ -93,7 +110,7 @@ public class Game : MonoBehaviour
             card.GetComponent<LayoutElement>().ignoreLayout = false;
         }
     }
-
+    
     void ShuffleDeck() {
         for (int i = 0; i < deck.Length; i++) {
             GameObject temp = deck[i];
@@ -230,6 +247,15 @@ public class Game : MonoBehaviour
             playerTurn = false;
             if (enemyImmune)
                 enemyImmune = false;
+            GameObject[] cardsonHand = GameObject.FindGameObjectsWithTag("HandCard");
+            if (cardsonHand.Length > 6) {
+                for (int i = 6; i < cardsonHand.Length; i++) {
+                    cardsonHand[i].transform.position = new Vector3(1, 0, 0);
+                    cardsonHand[i].transform.SetParent(GameObject.Find("Trash").transform);
+                    cardsonHand[i].transform.tag = "TrashCard";
+                    cardsonHand[i].GetComponent<LayoutElement>().ignoreLayout = false;
+                }
+            }
             OpponentTurn();
         } else {
             if (playerImmune)
@@ -295,6 +321,60 @@ public class Game : MonoBehaviour
     }
 
     private void OpponentTurn () {
+        StartCoroutine(wait(0.5f));
+        switch (turn) {
+            case 1:
+                if (!playerImmune) {
+                    playerHealth -= 10;
+                }
+                break;
+            case 2:
+                if (!playerImmune) {
+                    playerHealth -= 10;
+                }
+                break;
+            case 3:
+                if (!playerImmune) {
+                    playerHealth -= 20;
+                }
+                break;
+            case 4:
+                if (!playerImmune) {
+                    playerHealth -= 20;
+                }
+                break;
+            case 5:
+                if (!playerImmune) {
+                    playerHealth -= 40;
+                }
+                break;
+            case 6:
+                if (!playerImmune) {
+                    playerHealth -= 40;
+                }
+                break;
+            case 7:
+                if (!playerImmune) {
+                    playerHealth -= 60;
+                }
+                break;
+            case 8:
+                if (!playerImmune) {
+                    playerHealth -= 60;
+                }
+                break;
+            case 9:
+                if (!playerImmune) {
+                    playerHealth -= 60;
+                }
+                break;
+            default:    
+                if (!playerImmune) {
+                    playerHealth -= 60;
+                }
+                break;
+        }
+        StartCoroutine(wait(0.5f));
         ChangeTurn();
     }
     // Update is called once per frame
@@ -308,6 +388,7 @@ public class Game : MonoBehaviour
             endTurnButton.GetComponent<Button>().interactable = true;
         }
         
+        deck = GameObject.FindGameObjectsWithTag("DeckCard");
         //if number of cards in deck is 0, reshuffle all trash cards into deck
         if (deck.Length == 0) {
             GameObject[] trash = GameObject.FindGameObjectsWithTag("TrashCard");
@@ -319,5 +400,29 @@ public class Game : MonoBehaviour
             }
             ShuffleDeck();
         }
+
+        playerhealthBar = playerhealthBar.GetComponent<Slider>();
+        playerhealthBar.value = playerHealth;
+        enemyhealthBar = enemyhealthBar.GetComponent<Slider>();
+        enemyhealthBar.value = enemyHealth;
+
+        if (playerHealth <= 0) {
+            playerHealth = 0;
+            playerhealthText.text = playerHealth.ToString();
+            //player loses
+        } else if (enemyHealth <= 0) {
+            //player wins
+            enemyHealth = 0;
+            enemyhealthText.text = enemyHealth.ToString();
+        }
+
+        playerhealthText.text = playerHealth.ToString();
+        enemyhealthText.text = enemyHealth.ToString();
+    }
+
+    IEnumerator wait(float sec) {
+        yield return new WaitForSeconds(sec);
     }
 }
+
+
