@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -173,6 +174,9 @@ public class Game : MonoBehaviour
                 case 6:
                     //discard random card from hand
                     GameObject[] cardsonHand = GameObject.FindGameObjectsWithTag("HandCard");
+                    if (cardsonHand.Length == 0) {
+                        break;
+                    }
                     int randomIndex = Random.Range(0, cardsonHand.Length);
                     cardsonHand[randomIndex].transform.position = new Vector3(1, 0, 0);
                     cardsonHand[randomIndex].transform.SetParent(GameObject.Find("Trash").transform);
@@ -205,6 +209,9 @@ public class Game : MonoBehaviour
                 case 9:
                     //discard random card from hand and draw 2 cards
                     GameObject[] cardsonHand2 = GameObject.FindGameObjectsWithTag("HandCard");
+                    if (cardsonHand2.Length == 0) {
+                        break;
+                    }
                     int randomIndex2 = Random.Range(0, cardsonHand2.Length);
                     cardsonHand2[randomIndex2].transform.position = new Vector3(1, 0, 0);
                     cardsonHand2[randomIndex2].transform.SetParent(GameObject.Find("Trash").transform);
@@ -355,22 +362,22 @@ public class Game : MonoBehaviour
                 break;
             case 7:
                 if (!playerImmune) {
-                    playerHealth -= 60;
+                    playerHealth -= 40;
                 }
                 break;
             case 8:
                 if (!playerImmune) {
-                    playerHealth -= 60;
+                    playerHealth -= 40;
                 }
                 break;
             case 9:
                 if (!playerImmune) {
-                    playerHealth -= 60;
+                    playerHealth -= 40;
                 }
                 break;
             default:    
                 if (!playerImmune) {
-                    playerHealth -= 60;
+                    playerHealth -= 40;
                 }
                 break;
         }
@@ -410,10 +417,12 @@ public class Game : MonoBehaviour
             playerHealth = 0;
             playerhealthText.text = playerHealth.ToString();
             //player loses
+            SceneManager.LoadScene("Lose", LoadSceneMode.Single);
         } else if (enemyHealth <= 0) {
             //player wins
             enemyHealth = 0;
             enemyhealthText.text = enemyHealth.ToString();
+            SceneManager.LoadScene("Win", LoadSceneMode.Single);
         }
 
         playerhealthText.text = playerHealth.ToString();
